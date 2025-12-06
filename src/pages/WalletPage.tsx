@@ -1,6 +1,7 @@
 import { MainLayout } from '@/components/layout/MainLayout';
 import { GlassCard } from '@/components/ui/glass-card';
 import { ResultBadge } from '@/components/bet/ResultBadge';
+import { WalletConnectButton } from '@/components/WalletConnectButton';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { useWallet } from '@/hooks/useWallet';
@@ -57,14 +58,7 @@ export default function WalletPage() {
             <p className="text-muted-foreground mb-6">
               View your balance, bets history, and claimable winnings
             </p>
-            <Button
-              onClick={connect}
-              disabled={isConnecting}
-              size="lg"
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-            </Button>
+            <WalletConnectButton size="lg" className="w-full" />
           </GlassCard>
         </div>
       </MainLayout>

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { WalletProvider } from "@/contexts/WalletContext";
 import Dashboard from "./pages/Dashboard";
 import PlaceBet from "./pages/PlaceBet";
 import RoundsHistory from "./pages/RoundsHistory";
@@ -24,20 +25,22 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path={ROUTES.dashboard} element={<Dashboard />} />
-            <Route path={ROUTES.bet} element={<PlaceBet />} />
-            <Route path={ROUTES.history} element={<RoundsHistory />} />
-            <Route path={ROUTES.wallet} element={<WalletPage />} />
-            <Route path={ROUTES.settings} element={<SettingsPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <WalletProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path={ROUTES.dashboard} element={<Dashboard />} />
+              <Route path={ROUTES.bet} element={<PlaceBet />} />
+              <Route path={ROUTES.history} element={<RoundsHistory />} />
+              <Route path={ROUTES.wallet} element={<WalletPage />} />
+              <Route path={ROUTES.settings} element={<SettingsPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </WalletProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );

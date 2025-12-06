@@ -7,11 +7,12 @@ import { PriceChart } from '@/components/bet/PriceChart';
 import { RoundInfo } from '@/components/bet/RoundInfo';
 import { RecentBets } from '@/components/bet/RecentBets';
 import { ResultBadge } from '@/components/bet/ResultBadge';
+import { WalletConnectButton } from '@/components/WalletConnectButton';
 import { Button } from '@/components/ui/button';
 import { useWallet } from '@/hooks/useWallet';
 import { useRoundsHistory } from '@/hooks/useRoundsHistory';
-import { formatNumber, formatTimeAgo } from '@/lib/utils';
-import { ArrowUp, ArrowDown, Wallet, ArrowRight, Zap } from 'lucide-react';
+import { formatNumber } from '@/lib/utils';
+import { ArrowUp, ArrowDown, ArrowRight, Zap } from 'lucide-react';
 import { ROUTES } from '@/config/constants';
 
 export default function Dashboard() {
@@ -31,15 +32,10 @@ export default function Dashboard() {
           </p>
 
           {!connected && (
-            <Button
-              onClick={connect}
-              disabled={isConnecting}
+            <WalletConnectButton
               size="lg"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 glow-primary"
-            >
-              <Wallet className="h-5 w-5 mr-2" />
-              {isConnecting ? 'Connecting...' : 'Connect Wallet to Start'}
-            </Button>
+              className="glow-primary"
+            />
           )}
         </div>
 

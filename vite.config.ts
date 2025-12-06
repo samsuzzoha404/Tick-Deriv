@@ -7,6 +7,14 @@ export default defineConfig(() => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      '/api/qubic': {
+        target: 'https://rpc.qubic.org',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/qubic/, ''),
+        secure: true,
+      },
+    },
   },
   plugins: [react()],
   resolve: {

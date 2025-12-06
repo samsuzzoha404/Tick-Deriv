@@ -10,7 +10,7 @@ export interface Round {
   totalPool: number;
   upPool: number;
   downPool: number;
-  status: 'pending' | 'active' | 'resolved';
+  status: 'pending' | 'active' | 'completed' | 'resolved';
 }
 
 export interface Bet {

@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useWallet } from '@/hooks/useWallet';
 import { useTheme } from '@/contexts/ThemeContext';
+import { WalletConnectButton } from '@/components/WalletConnectButton';
 import { Button } from '@/components/ui/button';
 import { formatAddress, formatNumber } from '@/lib/utils';
 import { 
@@ -98,15 +99,7 @@ export function Header() {
               </Button>
             </div>
           ) : (
-            <Button
-              onClick={connect}
-              disabled={isConnecting}
-              size="sm"
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              <Wallet className="h-4 w-4 mr-2" />
-              {isConnecting ? 'Connecting...' : 'Connect'}
-            </Button>
+            <WalletConnectButton size="sm" />
           )}
 
           {/* Mobile menu button */}

@@ -1,22 +1,29 @@
-import { useState, useEffect, useCallback } from 'react';
-import { qubicWallet } from '@/lib/qubic/wallet';
-import { WalletState } from '@/types';
+import { useState, useCallback } from 'react';
+import { useWalletContext } from '@/hooks/useWalletContext';
 import { useToast } from '@/hooks/use-toast';
+import { useQubicBalance } from '@/hooks/useQubicBalance';
 
 export function useWallet() {
-  const [state, setState] = useState<WalletState>(qubicWallet.getState());
-  const [isConnecting, setIsConnecting] = useState(false);
+  const walletContext = useWalletContext();
   const { toast } = useToast();
+  const { data: liveBalance } = useQubicBalance();
+  const [seedInput, setSeedInput] = useState('');
 
-  useEffect(() => {
-    const unsubscribe = qubicWallet.subscribe(setState);
-    return unsubscribe;
-  }, []);
+  const connect = useCallback(async (seed?: string) => {
+    const seedToUse = seed ?? seedInput;
+    
+    if (!seedToUse || seedToUse.length < 55) {
+      toast({
+        title: 'Invalid Seed',
+        description: 'Seed must be at least 55 characters',
+        variant: 'destructive',
+      });
+      return;
+    }
 
-  const connect = useCallback(async () => {
-    setIsConnecting(true);
     try {
-      await qubicWallet.connect();
+      await walletContext.connectWallet(seedToUse);
+      setSeedInput('');
       toast({
         title: 'Wallet Connected',
         description: 'Successfully connected to your wallet',
@@ -27,23 +34,31 @@ export function useWallet() {
         description: error instanceof Error ? error.message : 'Failed to connect wallet',
         variant: 'destructive',
       });
-    } finally {
-      setIsConnecting(false);
     }
-  }, [toast]);
+  }, [walletContext, seedInput, toast]);
 
-  const disconnect = useCallback(async () => {
-    await qubicWallet.disconnect();
+  const disconnect = useCallback(() => {
+    walletContext.disconnectWallet();
     toast({
       title: 'Wallet Disconnected',
       description: 'Your wallet has been disconnected',
     });
-  }, [toast]);
+  }, [walletContext, toast]);
+
+  // Use live balance from TanStack Query if available, otherwise use context balance
+  const balance = liveBalance ?? walletContext.balance;
 
   return {
-    ...state,
-    isConnecting,
+    connected: walletContext.connected,
+    address: walletContext.address,
+    balance,
+    isConnecting: walletContext.isConnecting,
+    error: walletContext.error,
     connect,
     disconnect,
+    seedInput,
+    setSeedInput,
+    signAndSendTx: walletContext.signAndSendTx,
+    refreshBalance: walletContext.refreshBalance,
   };
 }

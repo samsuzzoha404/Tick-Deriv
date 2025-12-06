@@ -8,6 +8,7 @@ import { BetDirectionSelector } from '@/components/bet/BetDirectionSelector';
 import { BetAmountInput } from '@/components/bet/BetAmountInput';
 import { PayoutCalculator } from '@/components/bet/PayoutCalculator';
 import { RoundInfo } from '@/components/bet/RoundInfo';
+import { WalletConnectButton } from '@/components/WalletConnectButton';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { useWallet } from '@/hooks/useWallet';
@@ -70,24 +71,7 @@ export default function PlaceBet() {
             <p className="text-muted-foreground mb-6">
               Connect your wallet to start placing bets on Tick-Deriv
             </p>
-            <Button
-              onClick={connect}
-              disabled={isConnecting}
-              size="lg"
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              {isConnecting ? (
-                <>
-                  <Spinner size="sm" className="mr-2" />
-                  Connecting...
-                </>
-              ) : (
-                <>
-                  <Wallet className="h-5 w-5 mr-2" />
-                  Connect Wallet
-                </>
-              )}
-            </Button>
+            <WalletConnectButton size="lg" className="w-full" />
           </GlassCard>
         ) : betPlaced ? (
           <GlassCard className="p-8 text-center max-w-md mx-auto" glow="primary">
