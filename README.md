@@ -4,11 +4,18 @@ A decentralized binary options trading platform built on the Qubic blockchain. P
 
 [![Live Demo](https://img.shields.io/badge/demo-live-green)](https://tick-deriv.vercel.app/)
 [![Built with Qubic](https://img.shields.io/badge/blockchain-Qubic-blue)](https://qubic.org/)
+[![Smart Contract](https://img.shields.io/badge/smart%20contract-repo-orange)](https://github.com/arafateasin/TickDeriv)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## 🌐 Live Demo
 
 **[https://tick-deriv.vercel.app/](https://tick-deriv.vercel.app/)**
+
+## 📜 Smart Contract
+
+**[View Smart Contract Repository →](https://github.com/arafateasin/TickDeriv)**
+
+The TickDeriv smart contract is developed separately and will be deployed on the Qubic blockchain.
 
 ## ✨ Features
 
