@@ -21,30 +21,33 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
-      <div className="container py-8">
+      <div className="container py-8 max-w-7xl mx-auto">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="text-gradient">High-Frequency</span> Binary Options
+        <div className="text-center mb-16">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+            <span className="text-gradient">High-Frequency</span> Trading Platform
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-            Predict price movements on the Qubic blockchain. Fast rounds, instant payouts.
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed">
+            Predict price movements on the Qubic blockchain with precision. Fast rounds, instant settlements, transparent outcomes.
           </p>
 
           {!connected && (
-            <WalletConnectButton
-              size="lg"
-              className="glow-primary"
-            />
+            <div className="flex flex-col items-center gap-4">
+              <WalletConnectButton
+                size="lg"
+                className="glow-primary px-8 py-6 text-lg font-semibold"
+              />
+              <p className="text-sm text-muted-foreground">Connect to start trading in seconds</p>
+            </div>
           )}
         </div>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Trading Panel */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {/* Price & Timer Card */}
-            <GlassCard className="p-6">
+            <GlassCard className="p-8 shadow-xl">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="flex flex-col items-center justify-center">
                   <PriceDisplay size="lg" />
@@ -62,8 +65,8 @@ export default function Dashboard() {
 
             {/* Quick Bet Buttons */}
             <div className="grid grid-cols-2 gap-4">
-              <Link to={`${ROUTES.bet}?direction=UP`}>
-                <GlassCard hover glow="up" className="p-6 text-center">
+              <Link to={`${ROUTES.bet}?direction=UP`} className="block h-full">
+                <GlassCard hover glow="up" className="p-8 text-center h-full transition-all duration-300 hover:scale-[1.02]">
                   <div className="p-4 rounded-full bg-up/20 inline-flex mb-4">
                     <ArrowUp className="h-10 w-10 text-up" />
                   </div>
@@ -76,8 +79,8 @@ export default function Dashboard() {
                 </GlassCard>
               </Link>
 
-              <Link to={`${ROUTES.bet}?direction=DOWN`}>
-                <GlassCard hover glow="down" className="p-6 text-center">
+              <Link to={`${ROUTES.bet}?direction=DOWN`} className="block h-full">
+                <GlassCard hover glow="down" className="p-8 text-center h-full transition-all duration-300 hover:scale-[1.02]">
                   <div className="p-4 rounded-full bg-down/20 inline-flex mb-4">
                     <ArrowDown className="h-10 w-10 text-down" />
                   </div>
@@ -92,9 +95,9 @@ export default function Dashboard() {
             </div>
 
             {/* Previous Rounds */}
-            <GlassCard className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            <GlassCard className="p-8 shadow-xl">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-base font-semibold text-foreground uppercase tracking-wider">
                   Previous Rounds
                 </h3>
                 <Link

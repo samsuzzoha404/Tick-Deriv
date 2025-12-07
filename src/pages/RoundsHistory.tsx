@@ -19,15 +19,15 @@ export default function RoundsHistory() {
 
   return (
     <MainLayout>
-      <div className="container py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Rounds History</h1>
-          <p className="text-muted-foreground">
-            View all past rounds and their results
+      <div className="container py-10 max-w-7xl mx-auto">
+        <div className="mb-10">
+          <h1 className="text-4xl md:text-5xl font-bold mb-3 tracking-tight">Rounds History</h1>
+          <p className="text-lg text-muted-foreground">
+            Complete history of all past rounds and their results
           </p>
         </div>
 
-        <GlassCard className="overflow-hidden">
+        <GlassCard className="overflow-hidden shadow-2xl">
           {isLoading ? (
             <div className="flex justify-center py-12">
               <Spinner size="lg" />
@@ -36,8 +36,8 @@ export default function RoundsHistory() {
             <>
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-muted/50">
-                    <tr className="text-xs text-muted-foreground uppercase">
+                  <thead className="bg-muted/60">
+                    <tr className="text-sm text-foreground/80 font-semibold uppercase tracking-wider">
                       <th className="text-left p-4">Round</th>
                       <th className="text-right p-4">Start Price</th>
                       <th className="text-right p-4">End Price</th>
@@ -56,7 +56,7 @@ export default function RoundsHistory() {
                       const winnersPool = round.result === 'UP' ? round.downPool : round.upPool;
 
                       return (
-                        <tr key={round.id} className="hover:bg-muted/30 transition-colors">
+                        <tr key={round.id} className="hover:bg-muted/40 transition-all duration-200">
                           <td className="p-4 font-mono font-medium">#{round.id}</td>
                           <td className="p-4 text-right font-mono">
                             ${formatNumber(round.startPrice)}

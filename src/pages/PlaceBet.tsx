@@ -56,38 +56,42 @@ export default function PlaceBet() {
 
   return (
     <MainLayout>
-      <div className="container py-8 max-w-4xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Place Your Bet</h1>
-          <p className="text-muted-foreground">
-            Predict the price direction and win up to 1.96x your stake
+      <div className="container py-10 max-w-5xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">Place Your Bet</h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Predict the price direction and win up to <span className="text-up font-semibold">1.96x</span> your stake
           </p>
         </div>
 
         {!connected ? (
-          <GlassCard className="p-8 text-center max-w-md mx-auto">
-            <Wallet className="h-16 w-16 text-primary mx-auto mb-4" />
-            <h2 className="text-xl font-bold mb-2">Connect Your Wallet</h2>
-            <p className="text-muted-foreground mb-6">
-              Connect your wallet to start placing bets on Tick-Deriv
+          <GlassCard className="p-10 text-center max-w-md mx-auto shadow-2xl">
+            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+              <Wallet className="h-10 w-10 text-primary" />
+            </div>
+            <h2 className="text-2xl font-bold mb-3">Connect Your Wallet</h2>
+            <p className="text-muted-foreground mb-8 leading-relaxed">
+              Connect your wallet to start placing bets on the platform
             </p>
-            <WalletConnectButton size="lg" className="w-full" />
+            <WalletConnectButton size="lg" className="w-full py-6" />
           </GlassCard>
         ) : betPlaced ? (
-          <GlassCard className="p-8 text-center max-w-md mx-auto" glow="primary">
-            <CheckCircle2 className="h-16 w-16 text-up mx-auto mb-4" />
-            <h2 className="text-xl font-bold mb-2">Bet Placed Successfully!</h2>
-            <p className="text-muted-foreground mb-4">
+          <GlassCard className="p-10 text-center max-w-md mx-auto shadow-2xl" glow="primary">
+            <div className="w-20 h-20 rounded-full bg-up/10 flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="h-10 w-10 text-up" />
+            </div>
+            <h2 className="text-2xl font-bold mb-3">Bet Placed Successfully!</h2>
+            <p className="text-muted-foreground mb-6 leading-relaxed">
               Your bet has been submitted to the blockchain
             </p>
             <CountdownTimer size="md" />
           </GlassCard>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main betting form */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-8">
               {/* Price & Timer */}
-              <GlassCard className="p-6">
+              <GlassCard className="p-8 shadow-xl">
                 <div className="grid grid-cols-2 gap-6">
                   <PriceDisplay size="md" />
                   <div className="border-l border-border pl-6">
@@ -97,8 +101,8 @@ export default function PlaceBet() {
               </GlassCard>
 
               {/* Direction Selector */}
-              <GlassCard className="p-6">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+              <GlassCard className="p-8 shadow-xl">
+                <h3 className="text-base font-semibold text-foreground uppercase tracking-wider mb-6">
                   1. Select Direction
                 </h3>
                 <BetDirectionSelector
@@ -109,8 +113,8 @@ export default function PlaceBet() {
               </GlassCard>
 
               {/* Amount Input */}
-              <GlassCard className="p-6">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+              <GlassCard className="p-8 shadow-xl">
+                <h3 className="text-base font-semibold text-foreground uppercase tracking-wider mb-6">
                   2. Enter Amount
                 </h3>
                 <BetAmountInput
@@ -126,7 +130,7 @@ export default function PlaceBet() {
                 onClick={handlePlaceBet}
                 disabled={!canPlaceBet || isPlacingBet}
                 size="lg"
-                className="w-full h-14 text-lg bg-primary text-primary-foreground hover:bg-primary/90 glow-primary"
+                className="w-full h-16 text-xl font-semibold bg-primary text-primary-foreground hover:bg-primary/90 glow-primary transition-all duration-300 hover:scale-[1.02]"
               >
                 {isPlacingBet ? (
                   <>

@@ -34,29 +34,29 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-xl">
-      <div className="container flex h-16 items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/90 backdrop-blur-2xl shadow-sm">
+      <div className="container flex h-20 items-center justify-between max-w-7xl mx-auto">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-            <Target className="h-5 w-5 text-primary-foreground" />
+        <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
+            <Target className="h-6 w-6 text-primary-foreground" />
           </div>
-          <span className="font-bold text-xl tracking-tight">
+          <span className="font-bold text-2xl tracking-tight">
             Tick<span className="text-primary">Deriv</span>
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-2">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                "flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300",
                 location.pathname === item.path
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  ? "bg-primary/15 text-primary shadow-sm scale-105"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/80 hover:scale-105"
               )}
             >
               <item.icon className="h-4 w-4" />
@@ -83,16 +83,16 @@ export function Header() {
 
           {/* Wallet */}
           {connected ? (
-            <div className="flex items-center gap-2">
-              <div className="hidden sm:block text-right">
-                <div className="text-xs text-muted-foreground">Balance</div>
-                <div className="text-sm font-mono font-medium">{formatNumber(balance)} QU</div>
+            <div className="flex items-center gap-3">
+              <div className="hidden lg:block text-right px-4 py-2 rounded-lg bg-muted/50">
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Balance</div>
+                <div className="text-base font-mono font-semibold text-foreground">{formatNumber(balance)} <span className="text-primary">QU</span></div>
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={disconnect}
-                className="font-mono"
+                className="font-mono font-semibold hover:bg-muted/80 transition-all"
               >
                 <Wallet className="h-4 w-4 mr-2" />
                 {formatAddress(address || '', 4)}

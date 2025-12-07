@@ -2,7 +2,42 @@
 
 ## Project info
 
-A decentralized betting application built on Qubic blockchain.
+A decentralized high-frequency binary options trading platform built on Qubic blockchain.
+
+## 🎮 Demo Mode
+
+The application runs in **full demo simulation mode** by default, allowing you to explore all features without needing a real Qubic wallet or funds.
+
+### Demo Features
+
+- **Instant Demo Wallet**: Connect with one click to get 10,000 QU demo balance
+- **Realistic Price Simulation**: Live price updates with smooth, realistic volatility
+- **Functional Betting**: Place bets and see real-time win/loss calculations
+- **Persistent State**: Your demo wallet balance and bet history are saved in your browser
+- **30-Second Rounds**: Fast-paced rounds for quick testing
+- **Automatic Payouts**: Win 1.9x your bet amount on correct predictions
+
+### Using Demo Mode
+
+1. Click "Connect Wallet" button
+2. Select "Demo Wallet" tab
+3. Click "Connect Demo Wallet" to instantly get started
+4. You'll receive 10,000 QU demo balance
+5. Place bets on UP or DOWN price movements
+6. Watch rounds complete and claim your winnings!
+
+Your demo wallet state persists across browser sessions using localStorage.
+
+📖 **[Read the Quick Start Guide](./QUICK_START.md)** for a detailed walkthrough!
+
+### Real Wallet Support
+
+You can also connect with a real Qubic wallet by entering your seed phrase in the "Real Wallet" tab. However, the smart contract is not yet deployed, so only simulated transactions will work.
+
+## 📚 Documentation
+
+- **[Quick Start Guide](./QUICK_START.md)** - Get started in under 1 minute
+- **[Demo Implementation Details](./DEMO_IMPLEMENTATION.md)** - Technical documentation
 
 ## How can I edit this code?
 

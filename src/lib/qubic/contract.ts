@@ -5,6 +5,24 @@ import { qubicConnector } from './connector';
 // Simulation state for demo purposes (when TickDeriv SC is not deployed)
 let simulatedRoundId = 1000;
 let simulatedPrice = 0.000025; // Simulated QU price in USD
+let priceHistory: number[] = [simulatedPrice];
+let priceVelocity = 0; // Smooth price changes
+const PRICE_STORAGE_KEY = 'qubic_demo_price';
+const PRICE_HISTORY_KEY = 'qubic_demo_price_history';
+
+// Load saved price state
+try {
+  const savedPrice = localStorage.getItem(PRICE_STORAGE_KEY);
+  const savedHistory = localStorage.getItem(PRICE_HISTORY_KEY);
+  if (savedPrice) {
+    simulatedPrice = parseFloat(savedPrice);
+  }
+  if (savedHistory) {
+    priceHistory = JSON.parse(savedHistory);
+  }
+} catch (e) {
+  // Use defaults if localStorage fails
+}
 
 function generateSimulatedRound(id: number, tick: number, isActive = false): Round {
   const startTick = id * QUBIC_CONFIG.roundDuration;
@@ -31,6 +49,36 @@ function generateSimulatedRound(id: number, tick: number, isActive = false): Rou
     downPool,
     status: isActive ? 'active' : tick >= endTick ? 'completed' : 'pending',
   };
+}
+
+// Smooth price update function
+function updateSimulatedPrice(): void {
+  // Add momentum to price changes for smoother transitions
+  const randomForce = (Math.random() - 0.5) * 0.0000005;
+  priceVelocity = priceVelocity * 0.95 + randomForce; // Damping + random force
+  
+  // Clamp velocity
+  priceVelocity = Math.max(-0.0000005, Math.min(0.0000005, priceVelocity));
+  
+  // Update price
+  simulatedPrice += priceVelocity;
+  
+  // Keep price in reasonable range
+  simulatedPrice = Math.max(0.00001, Math.min(0.0001, simulatedPrice));
+  
+  // Save to history
+  priceHistory.push(simulatedPrice);
+  if (priceHistory.length > 100) {
+    priceHistory.shift();
+  }
+  
+  // Persist to localStorage
+  try {
+    localStorage.setItem(PRICE_STORAGE_KEY, simulatedPrice.toString());
+    localStorage.setItem(PRICE_HISTORY_KEY, JSON.stringify(priceHistory));
+  } catch (e) {
+    // Ignore localStorage errors
+  }
 }
 
 // Contract interaction functions
@@ -73,13 +121,16 @@ export async function getLiveTick(): Promise<Tick> {
 export async function getCurrentPrice(): Promise<PriceData> {
   // Simulate price with small random fluctuations
   if (QUBIC_CONFIG.simulationMode) {
-    // Add small random price movement
-    simulatedPrice += (Math.random() - 0.5) * 0.000001;
-    simulatedPrice = Math.max(0.00001, simulatedPrice); // Keep positive
+    // Update price smoothly
+    updateSimulatedPrice();
+    
+    // Calculate 24h change based on price history
+    const oldPrice = priceHistory.length > 50 ? priceHistory[0] : simulatedPrice;
+    const change24h = ((simulatedPrice - oldPrice) / oldPrice) * 100;
     
     return {
       price: simulatedPrice * 1e8, // Convert to integer representation (like satoshis)
-      change24h: (Math.random() - 0.5) * 10, // -5% to +5%
+      change24h,
       timestamp: Date.now(),
     };
   }
@@ -112,6 +163,16 @@ export async function getCurrentRound(): Promise<Round> {
   
   if (QUBIC_CONFIG.simulationMode) {
     simulatedRoundId = currentRoundId;
+    
+    // Track round start price
+    if (!roundPrices.has(currentRoundId)) {
+      roundPrices.set(currentRoundId, {
+        startPrice: simulatedPrice,
+        endPrice: null,
+      });
+      saveRoundPrices();
+    }
+    
     return generateSimulatedRound(currentRoundId, tick.tick, true);
   }
   
@@ -136,6 +197,16 @@ export async function getRound(id: number): Promise<Round> {
   if (QUBIC_CONFIG.simulationMode) {
     const currentRoundId = Math.floor(tick.tick / QUBIC_CONFIG.roundDuration);
     const isActive = id === currentRoundId;
+    
+    // For completed rounds, record end price
+    if (id < currentRoundId && roundPrices.has(id)) {
+      const prices = roundPrices.get(id)!;
+      if (prices.endPrice === null) {
+        prices.endPrice = simulatedPrice;
+        saveRoundPrices();
+      }
+    }
+    
     return generateSimulatedRound(id, tick.tick, isActive);
   }
   
@@ -173,8 +244,115 @@ export async function getRoundsHistory(limit = 20): Promise<Round[]> {
 
 // Simulated bets storage for demo
 const simulatedBets: Map<string, Bet[]> = new Map();
+const BETS_STORAGE_KEY = 'qubic_demo_bets';
+const ROUND_PRICES_KEY = 'qubic_demo_round_prices';
 
-export async function placeBet(direction: BetDirection, amount: number): Promise<{ txHash: string; bet: Bet }> {
+// Round price tracking for bet resolution
+const roundPrices: Map<number, { startPrice: number; endPrice: number | null }> = new Map();
+
+// Load saved bets and round prices
+try {
+  const savedBets = localStorage.getItem(BETS_STORAGE_KEY);
+  if (savedBets) {
+    const parsedBets = JSON.parse(savedBets);
+    Object.entries(parsedBets).forEach(([address, bets]) => {
+      simulatedBets.set(address, bets as Bet[]);
+    });
+  }
+  
+  const savedRoundPrices = localStorage.getItem(ROUND_PRICES_KEY);
+  if (savedRoundPrices) {
+    const parsed = JSON.parse(savedRoundPrices);
+    Object.entries(parsed).forEach(([roundId, prices]) => {
+      roundPrices.set(Number(roundId), prices as { startPrice: number; endPrice: number | null });
+    });
+  }
+} catch (e) {
+  // Use defaults if localStorage fails
+}
+
+// Save bets to localStorage
+function saveBets(): void {
+  try {
+    const betsObj: Record<string, Bet[]> = {};
+    simulatedBets.forEach((bets, address) => {
+      betsObj[address] = bets;
+    });
+    localStorage.setItem(BETS_STORAGE_KEY, JSON.stringify(betsObj));
+  } catch (e) {
+    // Ignore localStorage errors
+  }
+}
+
+// Save round prices to localStorage
+function saveRoundPrices(): void {
+  try {
+    const pricesObj: Record<number, { startPrice: number; endPrice: number | null }> = {};
+    roundPrices.forEach((prices, roundId) => {
+      pricesObj[roundId] = prices;
+    });
+    localStorage.setItem(ROUND_PRICES_KEY, JSON.stringify(pricesObj));
+  } catch (e) {
+    // Ignore localStorage errors
+  }
+}
+
+export async function placeBet(direction: BetDirection, amount: number, walletAddress?: string, walletBalance?: number): Promise<{ txHash: string; bet: Bet }> {
+  // In simulation mode, use provided wallet info
+  if (QUBIC_CONFIG.simulationMode) {
+    const address = walletAddress;
+    if (!address) {
+      throw new Error('No wallet address');
+    }
+
+    if (amount < QUBIC_CONFIG.minBet || amount > QUBIC_CONFIG.maxBet) {
+      throw new Error(`Bet amount must be between ${QUBIC_CONFIG.minBet} and ${QUBIC_CONFIG.maxBet}`);
+    }
+
+    const balance = walletBalance ?? 0;
+    if (amount > balance) {
+      throw new Error('Insufficient balance');
+    }
+
+    // Get current round
+    const currentRound = await getCurrentRound();
+    
+    // Simulate placing a bet
+    const txHash = `sim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const bet: Bet = {
+      id: txHash,
+      roundId: currentRound.id,
+      address,
+      direction,
+      amount,
+      timestamp: Date.now(),
+      claimed: false,
+      won: null,
+      payout: null,
+    };
+    
+    // Store in simulated storage
+    const userBets = simulatedBets.get(address) ?? [];
+    userBets.push(bet);
+    simulatedBets.set(address, userBets);
+    saveBets();
+    
+    // Deduct bet amount from demo wallet balance
+    const DEMO_BALANCE_KEY = 'qubic_demo_balance';
+    try {
+      const currentBalance = parseFloat(localStorage.getItem(DEMO_BALANCE_KEY) || '0');
+      const newBalance = currentBalance - amount;
+      localStorage.setItem(DEMO_BALANCE_KEY, newBalance.toString());
+      // Trigger balance update event
+      window.dispatchEvent(new Event('wallet-balance-update'));
+    } catch (e) {
+      // Ignore localStorage errors
+    }
+    
+    return { txHash, bet };
+  }
+
+  // Real wallet mode
   if (!qubicConnector.isConnected()) {
     throw new Error('Wallet not connected');
   }
@@ -195,29 +373,6 @@ export async function placeBet(direction: BetDirection, amount: number): Promise
 
   // Get current round
   const currentRound = await getCurrentRound();
-  
-  if (QUBIC_CONFIG.simulationMode) {
-    // Simulate placing a bet
-    const txHash = `sim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const bet: Bet = {
-      id: txHash,
-      roundId: currentRound.id,
-      address,
-      direction,
-      amount,
-      timestamp: Date.now(),
-      claimed: false,
-      won: null,
-      payout: null,
-    };
-    
-    // Store in simulated storage
-    const userBets = simulatedBets.get(address) ?? [];
-    userBets.push(bet);
-    simulatedBets.set(address, userBets);
-    
-    return { txHash, bet };
-  }
   
   // Build input data for bet
   const inputData = encodeBetInput(direction, currentRound.id);
@@ -259,10 +414,23 @@ export async function getUserBets(address: string): Promise<Bet[]> {
     const tick = await getLiveTick();
     const currentRoundId = Math.floor(tick.tick / QUBIC_CONFIG.roundDuration);
     
-    return bets.map(bet => {
+    let betsUpdated = false;
+    const updatedBets = bets.map(bet => {
       if (bet.roundId < currentRoundId && bet.won === null) {
-        // Simulate random outcome for completed rounds
-        const won = Math.random() > 0.5;
+        // Determine outcome based on actual price movement
+        const prices = roundPrices.get(bet.roundId);
+        let won: boolean;
+        
+        if (prices && prices.endPrice !== null) {
+          // Use actual price movement
+          const priceUp = prices.endPrice > prices.startPrice;
+          won = bet.direction === 'UP' ? priceUp : !priceUp;
+        } else {
+          // Fallback to random if no price data
+          won = Math.random() > 0.48; // Slight house edge
+        }
+        
+        betsUpdated = true;
         return {
           ...bet,
           won,
@@ -271,6 +439,14 @@ export async function getUserBets(address: string): Promise<Bet[]> {
       }
       return bet;
     });
+    
+    // Save if updated
+    if (betsUpdated) {
+      simulatedBets.set(address, updatedBets);
+      saveBets();
+    }
+    
+    return updatedBets;
   }
   
   return [];
@@ -291,17 +467,13 @@ export async function getUserClaimable(address: string): Promise<ClaimableWinnin
   return [];
 }
 
-export async function claimWinnings(roundId: number): Promise<{ txHash: string; amount: number }> {
-  if (!qubicConnector.isConnected()) {
-    throw new Error('Wallet not connected');
-  }
-  
-  const address = qubicConnector.getAddress();
-  if (!address) {
-    throw new Error('No wallet address');
-  }
-
+export async function claimWinnings(roundId: number, walletAddress?: string): Promise<{ txHash: string; amount: number }> {
   if (QUBIC_CONFIG.simulationMode) {
+    const address = walletAddress;
+    if (!address) {
+      throw new Error('No wallet address');
+    }
+
     // Simulate claim
     const bets = simulatedBets.get(address) ?? [];
     const betIndex = bets.findIndex(b => b.roundId === roundId && b.won === true && !b.claimed);
@@ -313,11 +485,34 @@ export async function claimWinnings(roundId: number): Promise<{ txHash: string; 
     const bet = bets[betIndex];
     bets[betIndex] = { ...bet, claimed: true };
     simulatedBets.set(address, bets);
+    saveBets();
+    
+    // Update demo wallet balance
+    const DEMO_BALANCE_KEY = 'qubic_demo_balance';
+    try {
+      const currentBalance = parseFloat(localStorage.getItem(DEMO_BALANCE_KEY) || '0');
+      const newBalance = currentBalance + (bet.payout ?? 0);
+      localStorage.setItem(DEMO_BALANCE_KEY, newBalance.toString());
+      // Trigger balance update event
+      window.dispatchEvent(new Event('wallet-balance-update'));
+    } catch (e) {
+      // Ignore localStorage errors
+    }
     
     return {
       txHash: `claim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       amount: bet.payout ?? 0,
     };
+  }
+
+  // Real wallet mode
+  if (!qubicConnector.isConnected()) {
+    throw new Error('Wallet not connected');
+  }
+  
+  const address = qubicConnector.getAddress();
+  if (!address) {
+    throw new Error('No wallet address');
   }
 
   // Build input data for claim

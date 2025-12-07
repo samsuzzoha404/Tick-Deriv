@@ -46,7 +46,9 @@ export function useWallet() {
   }, [walletContext, toast]);
 
   // Use live balance from TanStack Query if available, otherwise use context balance
-  const balance = liveBalance ?? walletContext.balance;
+  const rawBalance = liveBalance ?? walletContext.balance;
+  // Ensure balance is always a valid number
+  const balance = !isNaN(rawBalance) && isFinite(rawBalance) ? rawBalance : 0;
 
   return {
     connected: walletContext.connected,
@@ -55,10 +57,13 @@ export function useWallet() {
     isConnecting: walletContext.isConnecting,
     error: walletContext.error,
     connect,
+    connectDemoWallet: walletContext.connectDemoWallet,
     disconnect,
+    disconnectWallet: walletContext.disconnectWallet,
     seedInput,
     setSeedInput,
     signAndSendTx: walletContext.signAndSendTx,
     refreshBalance: walletContext.refreshBalance,
+    isDemoMode: walletContext.isDemoMode,
   };
 }

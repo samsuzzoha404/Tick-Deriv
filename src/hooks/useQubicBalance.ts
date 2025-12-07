@@ -8,18 +8,22 @@ import { REFETCH_INTERVALS } from '@/config/constants';
  * Polls every 2 seconds when wallet is connected
  */
 export function useQubicBalance() {
-  const { connected, address } = useWalletContext();
+  const { connected, address, isDemoMode, balance } = useWalletContext();
 
   return useQuery({
-    queryKey: ['qubicBalance', address],
+    queryKey: ['qubicBalance', address, isDemoMode],
     queryFn: async (): Promise<number> => {
       if (!connected || !address) {
         return 0;
       }
+      // In demo mode, return the balance from context instead of querying RPC
+      if (isDemoMode) {
+        return balance;
+      }
       return qubicConnector.getBalance(address);
     },
     enabled: connected && !!address,
-    refetchInterval: 2000, // Poll every 2 seconds
+    refetchInterval: isDemoMode ? false : 2000, // Don't poll in demo mode
     staleTime: 1000,
     retry: 2,
     retryDelay: 1000,

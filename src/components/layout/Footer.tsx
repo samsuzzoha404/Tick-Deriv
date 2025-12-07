@@ -2,42 +2,42 @@ import { Target, ExternalLink } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-card/50">
-      <div className="container py-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+    <footer className="border-t border-border/60 bg-card/30 backdrop-blur-xl">
+      <div className="container py-12 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded bg-primary flex items-center justify-center">
-              <Target className="h-4 w-4 text-primary-foreground" />
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
+              <Target className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-bold">
+            <span className="font-bold text-lg">
               Tick<span className="text-primary">Deriv</span>
             </span>
           </div>
 
           {/* Links */}
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">
+          <div className="flex items-center gap-8 text-base text-muted-foreground font-medium">
+            <a href="#" className="hover:text-primary transition-all duration-300 hover:scale-105">
               Documentation
             </a>
-            <a href="#" className="hover:text-foreground transition-colors flex items-center gap-1">
+            <a href="#" className="hover:text-primary transition-all duration-300 hover:scale-105 flex items-center gap-1.5">
               Qubic
-              <ExternalLink className="h-3 w-3" />
+              <ExternalLink className="h-4 w-4" />
             </a>
-            <a href="#" className="hover:text-foreground transition-colors">
+            <a href="#" className="hover:text-primary transition-all duration-300 hover:scale-105">
               Support
             </a>
           </div>
 
           {/* Network badge */}
-          <div className="flex items-center gap-2 text-sm">
-            <div className="h-2 w-2 rounded-full bg-up animate-pulse" />
-            <span className="text-muted-foreground">Qubic Testnet</span>
+          <div className="flex items-center gap-2.5 px-4 py-2 rounded-lg bg-muted/60 border border-border/50">
+            <div className="h-2.5 w-2.5 rounded-full bg-up animate-pulse shadow-lg shadow-up/50" />
+            <span className="text-sm font-medium text-foreground">Qubic Testnet</span>
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-border text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} TickDeriv. Decentralized binary options on Qubic.
+        <div className="mt-8 pt-8 border-t border-border/60 text-center text-sm text-muted-foreground">
+          © {new Date().getFullYear()} TickDeriv. Decentralized trading platform on Qubic.
         </div>
       </div>
     </footer>

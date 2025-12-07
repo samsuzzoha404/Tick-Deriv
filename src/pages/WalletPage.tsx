@@ -52,13 +52,15 @@ export default function WalletPage() {
     return (
       <MainLayout>
         <div className="container py-16">
-          <GlassCard className="p-8 text-center max-w-md mx-auto">
-            <Wallet className="h-16 w-16 text-primary mx-auto mb-4" />
-            <h2 className="text-xl font-bold mb-2">Connect Your Wallet</h2>
-            <p className="text-muted-foreground mb-6">
+          <GlassCard className="p-10 text-center max-w-md mx-auto shadow-2xl">
+            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+              <Wallet className="h-10 w-10 text-primary" />
+            </div>
+            <h2 className="text-2xl font-bold mb-3">Connect Your Wallet</h2>
+            <p className="text-muted-foreground mb-8 leading-relaxed">
               View your balance, bets history, and claimable winnings
             </p>
-            <WalletConnectButton size="lg" className="w-full" />
+            <WalletConnectButton size="lg" className="w-full py-6" />
           </GlassCard>
         </div>
       </MainLayout>
@@ -67,19 +69,19 @@ export default function WalletPage() {
 
   return (
     <MainLayout>
-      <div className="container py-8">
-        <h1 className="text-3xl font-bold mb-8">Wallet</h1>
+      <div className="container py-10 max-w-7xl mx-auto">
+        <h1 className="text-4xl md:text-5xl font-bold mb-10 tracking-tight">Wallet</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main column */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {/* Wallet Info */}
-            <GlassCard className="p-6">
-              <div className="flex items-start justify-between mb-6">
+            <GlassCard className="p-8 shadow-xl">
+              <div className="flex items-start justify-between mb-8">
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Wallet Address</div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-lg">{formatAddress(address || '', 8)}</span>
+                  <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Wallet Address</div>
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-xl font-semibold">{formatAddress(address || '', 8)}</span>
                     <Button variant="ghost" size="icon" onClick={copyAddress}>
                       {copied ? <Check className="h-4 w-4 text-up" /> : <Copy className="h-4 w-4" />}
                     </Button>
@@ -95,9 +97,9 @@ export default function WalletPage() {
                 </Button>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-lg bg-muted/50">
-                  <div className="text-sm text-muted-foreground mb-1">Balance</div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="p-6 rounded-xl bg-muted/60 border border-border/50">
+                  <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Balance</div>
                   <div className="text-3xl font-bold font-mono">{formatNumber(balance)} QU</div>
                 </div>
                 <div className="p-4 rounded-lg bg-primary/10">

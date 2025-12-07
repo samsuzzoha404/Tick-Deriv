@@ -20,7 +20,7 @@ export function GlassCard({ children, className, hover = false, glow = 'none' }:
     <div
       className={cn(
         "glass-card p-4 transition-all duration-300",
-        hover && "hover:scale-[1.02] hover:border-primary/50 cursor-pointer",
+        hover && "hover:scale-[1.02] hover:shadow-2xl hover:border-primary/60 cursor-pointer",
         glowClasses[glow],
         className
       )}

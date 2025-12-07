@@ -6,7 +6,7 @@ export const QUBIC_CONFIG = {
   // Use Vite proxy in development, direct URL in production
   rpcUrl: isDev ? '/api/qubic' : 'https://rpc.qubic.org',
   tickDuration: 1000, // ms per tick
-  roundDuration: 20, // ticks per round
+  roundDuration: 30, // ticks per round (30 seconds per round in demo)
   houseFee: 0.02, // 2%
   minBet: 1,
   maxBet: 10000,
